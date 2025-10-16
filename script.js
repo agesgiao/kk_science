@@ -24,6 +24,8 @@ document.addEventListener("DOMContentLoaded", () => {
     kk5: document.getElementById("kk5-audio"),
     kk6: document.getElementById("kk6-audio"),
     kk7: document.getElementById("kk7-audio"),
+    kk61: document.getElementById("kk61-audio"),
+    kk62: document.getElementById("kk62-audio")
   };
 
   const overlaySuccess = document.getElementById("overlay-success");
@@ -134,16 +136,6 @@ timeoutId = setTimeout(() => {
     endingTriggered = true;
   }
 }, 30000);
-
-// 成功時
-setTimeout(() => {
-  overlayVideoSuccess.currentTime = 0;
-  audioMap.kk62.currentTime = 0;
-  overlayVideoSuccess.muted = false;
-  audioMap.kk62.muted = false;
-  overlayVideoSuccess.play();
-  audioMap.kk62.play();
-}, 300);
 
   overlayVideoSuccess.onended = () => { overlaySuccess.style.display = "none"; };
   overlayVideoFail.onended = () => { overlayFail.style.display = "none"; };

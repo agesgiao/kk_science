@@ -118,22 +118,26 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }, 1000);
 
-timeoutId = setTimeout(() => {
-  if (!endingTriggered) {
-    overlayFail.style.display = "flex";
-    overlayVideoFail.play();
+    timeoutId = setTimeout(() => {
+      if (!endingTriggered) {
+        overlayFail.style.display = "flex";
+        overlayVideoFail.play();
 
-    setTimeout(() => {
-      videoMap.kk61.play();
-      audioMap.kk61.currentTime = 0;
-      audioMap.kk61.play();
-    }, 300);
+        setTimeout(() => {
+          if (videoMap.kk61 && audioMap.kk61) {
+            videoMap.kk61.currentTime = 0;
+            audioMap.kk61.currentTime = 0;
+            videoMap.kk61.muted = false;
+            audioMap.kk61.muted = false;
+            videoMap.kk61.play();
+            audioMap.kk61.play();
+          }
+        }, 300);
 
-    challengeStarted = false;
-    endingTriggered = true;
-  }
-}, 30000);
-
+        challengeStarted = false;
+        endingTriggered = true;
+      }
+    }, 30000);
   }
 
   overlayVideoSuccess.onended = () => { overlaySuccess.style.display = "none"; };
@@ -141,12 +145,14 @@ timeoutId = setTimeout(() => {
 
   for (let i = 1; i <= 16; i++) {
     const el = document.getElementById(`target${i}`);
+    if (!el) continue;
+
     el.addEventListener("targetFound", () => {
       if (challengeStarted && i !== 1 && !endingTriggered) return;
 
       switch (i) {
         case 1:
-          if (challengeStarted && !endingTriggered) {
+        if (challengeStarted && !endingTriggered) {
             clearTimeout(timeoutId);
             clearInterval(countdownInterval);
             countdownEl.style.display = "none";
@@ -154,9 +160,14 @@ timeoutId = setTimeout(() => {
             overlayVideoSuccess.play();
 
             setTimeout(() => {
-              videoMap.kk62.play();
-              audioMap.kk62.currentTime = 0;
-              audioMap.kk62.play();
+              if (videoMap.kk62 && audioMap.kk62) {
+                videoMap.kk62.currentTime = 0;
+                audioMap.kk62.currentTime = 0;
+                videoMap.kk62.muted = false;
+                audioMap.kk62.muted = false;
+                videoMap.kk62.play();
+                audioMap.kk62.play();
+              }
             }, 300);
 
             challengeStarted = false;

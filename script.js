@@ -118,16 +118,22 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }, 1000);
 
-    timeoutId = setTimeout(() => {
-      if (!endingTriggered) {
-        overlayFail.style.display = "flex";
-        overlayVideoFail.play();
-        videoMap.kk61.play();
-        audioMap.kk61.play();
-        challengeStarted = false;
-        endingTriggered = true;
-      }
-    }, 30000);
+timeoutId = setTimeout(() => {
+  if (!endingTriggered) {
+    overlayFail.style.display = "flex";
+    overlayVideoFail.play();
+
+    setTimeout(() => {
+      videoMap.kk61.play();
+      audioMap.kk61.currentTime = 0;
+      audioMap.kk61.play();
+    }, 300);
+
+    challengeStarted = false;
+    endingTriggered = true;
+  }
+}, 30000);
+
   }
 
   overlayVideoSuccess.onended = () => { overlaySuccess.style.display = "none"; };
@@ -146,8 +152,13 @@ document.addEventListener("DOMContentLoaded", () => {
             countdownEl.style.display = "none";
             overlaySuccess.style.display = "flex";
             overlayVideoSuccess.play();
-            videoMap.kk62.play();
-            audioMap.kk62.play();
+
+            setTimeout(() => {
+              videoMap.kk62.play();
+              audioMap.kk62.currentTime = 0;
+              audioMap.kk62.play();
+            }, 300);
+
             challengeStarted = false;
             endingTriggered = true;
           } else if (!challengeStarted) {

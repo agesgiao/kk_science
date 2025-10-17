@@ -23,7 +23,9 @@ document.addEventListener("DOMContentLoaded", () => {
     kk4: document.getElementById("kk4-audio"),
     kk5: document.getElementById("kk5-audio"),
     kk6: document.getElementById("kk6-audio"),
-    kk7: document.getElementById("kk7-audio")
+    kk7: document.getElementById("kk7-audio"),
+    kk61: document.getElementById("kk61-audio"),
+    kk62: document.getElementById("kk62-audio")
   };
 
   const overlaySuccess = document.getElementById("overlay-success");
@@ -122,8 +124,11 @@ document.addEventListener("DOMContentLoaded", () => {
         overlayVideoFail.play();
 
         setTimeout(() => {
-          videoMap.kk61.play(); // 音声付き動画
-        }, 300);
+  videoMap.kk61.play();
+  audioMap.kk61.currentTime = 0;
+  audioMap.kk61.play();
+}, 300);
+
 
         challengeStarted = false;
         endingTriggered = true;
@@ -150,9 +155,11 @@ document.addEventListener("DOMContentLoaded", () => {
             overlaySuccess.style.display = "flex";
             overlayVideoSuccess.play();
 
-            setTimeout(() => {
-              videoMap.kk62.play(); // 音声付き動画
-            }, 300);
+           setTimeout(() => {
+  videoMap.kk62.play();
+  audioMap.kk62.currentTime = 0;
+  audioMap.kk62.play();
+}, 300);
 
             challengeStarted = false;
             endingTriggered = true;

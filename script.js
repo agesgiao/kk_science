@@ -236,7 +236,7 @@ case 1:
           break;
 
         case 16:
-          resetAll();
+          location.reload();
           break;
       }
     });

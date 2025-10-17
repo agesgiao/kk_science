@@ -126,7 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		  
 		setTimeout(() => {
 			audioMap.kk61.play();
-		}, 300);
+		}, 1000);
 		  
         challengeStarted = false;
         endingTriggered = true;
@@ -154,7 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			  
 			setTimeout(() => {
 				audioMap.kk62.play();
-			}, 300);
+			}, 1000);
 			  
             challengeStarted = false;
             endingTriggered = true;

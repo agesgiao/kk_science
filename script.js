@@ -40,11 +40,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const voiceQueue = [];
   let currentVoice = null;
+	
+  const playedVoices = new Set();
 
   function enqueueVoice(id) {
-    if (currentVoice || voiceQueue.includes(id)) return;
-    voiceQueue.push(id);
-    tryPlayNextVoice();
+  	if (currentVoice || voiceQueue.includes(id) || playedVoices.has(id)) return;
+
+  	voiceQueue.push(id);
+  	tryPlayNextVoice();
   }
 
   function tryPlayNextVoice() {
@@ -57,12 +60,13 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    currentVoice = next;
-    currentVoice.currentTime = 0;
-    currentVoice.play();
-    currentVoice.onended = () => {
-      currentVoice = null;
-      tryPlayNextVoice();
+  	currentVoice = next;
+  	playedVoices.add(nextId); 
+  	currentVoice.currentTime = 0;
+  	currentVoice.play();
+  	currentVoice.onended = () => {
+    	currentVoice = null;
+		tryPlayNextVoice();
     };
   }
 
@@ -122,11 +126,13 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!endingTriggered) {
         overlayFail.style.display = "flex";
         overlayVideoFail.play();
-        videoMap.kk61.play();
 		  
-		setTimeout(() => {
-			audioMap.kk61.play();
-		}, 1000);
+		  videoMap.kk61.onplay = () => {
+  			setTimeout(() => {
+    			audioMap.kk61.play();
+  			}, 500);
+		  };
+		  videoMap.kk61.play();
 		  
         challengeStarted = false;
         endingTriggered = true;
@@ -150,11 +156,12 @@ document.addEventListener("DOMContentLoaded", () => {
             countdownEl.style.display = "none";
             overlaySuccess.style.display = "flex";
             overlayVideoSuccess.play();
-            videoMap.kk62.play();
-			  
-			setTimeout(() => {
-				audioMap.kk62.play();
-			}, 1000);
+			  videoMap.kk62.onplay = () => {
+  				setTimeout(() => {
+    				audioMap.kk62.play();
+  				}, 500);
+			  };
+			  videoMap.kk62.play();
 			  
             challengeStarted = false;
             endingTriggered = true;

@@ -130,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		  videoMap.kk61.onplay = () => {
   			setTimeout(() => {
     			audioMap.kk61.play();
-  			}, 500);
+  			}, 1000);
 		  };
 		  videoMap.kk61.play();
 		  
@@ -159,7 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			  videoMap.kk62.onplay = () => {
   				setTimeout(() => {
     				audioMap.kk62.play();
-  				}, 500);
+  				}, 1000);
 			  };
 			  videoMap.kk62.play();
 			  

@@ -13,9 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
     kk6: document.getElementById("kk6"),
     kk7: document.getElementById("kk7"),
     kk61: document.getElementById("kk61"),
-    kk62: document.getElementById("kk62"),
-    overlayVideoFail: document.getElementById("overlay-video-fail"),
-    overlayVideoSuccess: document.getElementById("overlay-video-success")
+    kk62: document.getElementById("kk62")
   };
 
   const audioMap = {
@@ -32,6 +30,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const overlaySuccess = document.getElementById("overlay-success");
   const overlayFail = document.getElementById("overlay-fail");
+  const overlayVideoSuccess = document.getElementById("overlay-video-success");
+  const overlayVideoFail = document.getElementById("overlay-video-fail");
   const countdownEl = document.getElementById("countdown");
 
   let challengeStarted = false;
@@ -40,45 +40,58 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const voiceQueue = [];
   let currentVoice = null;
+	
   const playedVoices = new Set();
 
   function enqueueVoice(id) {
-    if (currentVoice || voiceQueue.includes(id) || playedVoices.has(id)) return;
-    voiceQueue.push(id);
-    tryPlayNextVoice();
+  	if (currentVoice || voiceQueue.includes(id) || playedVoices.has(id)) return;
+
+  	voiceQueue.push(id);
+  	tryPlayNextVoice();
   }
 
   function tryPlayNextVoice() {
     if (currentVoice || voiceQueue.length === 0) return;
+
     const nextId = voiceQueue.shift();
     const next = voiceMap[nextId];
     if (!next) {
       tryPlayNextVoice();
       return;
     }
-    currentVoice = next;
-    playedVoices.add(nextId);
-    currentVoice.currentTime = 0;
-    currentVoice.play();
-    currentVoice.onended = () => {
-      currentVoice = null;
-      tryPlayNextVoice();
+
+  	currentVoice = next;
+  	playedVoices.add(nextId); 
+  	currentVoice.currentTime = 0;
+  	currentVoice.play();
+  	currentVoice.onended = () => {
+    	currentVoice = null;
+		tryPlayNextVoice();
     };
   }
 
   function resetMedia() {
-    Object.values(videoMap).forEach(v => { v.pause(); v.currentTime = 0; });
-    Object.values(audioMap).forEach(a => { a.pause(); a.currentTime = 0; });
-    Object.values(voiceMap).forEach(v => { v.pause(); v.currentTime = 0; });
+    Object.values(videoMap).forEach(v => {
+      v.pause();
+      v.currentTime = 0;
+    });
+    Object.values(audioMap).forEach(a => {
+      a.pause();
+      a.currentTime = 0;
+    });
+    Object.values(voiceMap).forEach(v => {
+      v.pause();
+      v.currentTime = 0;
+    });
   }
 
   function resetOverlay() {
     overlaySuccess.style.display = "none";
     overlayFail.style.display = "none";
-    videoMap.overlayVideoSuccess.pause();
-    videoMap.overlayVideoSuccess.currentTime = 0;
-    videoMap.overlayVideoFail.pause();
-    videoMap.overlayVideoFail.currentTime = 0;
+    overlayVideoSuccess.pause();
+    overlayVideoSuccess.currentTime = 0;
+    overlayVideoFail.pause();
+    overlayVideoFail.currentTime = 0;
   }
 
   function resetAll() {
@@ -93,127 +106,141 @@ document.addEventListener("DOMContentLoaded", () => {
     currentVoice = null;
   }
 
-  function startCountdown() {
-    if (challengeStarted) return;
-    challengeStarted = true;
-    let count = 30;
+function startCountdown() {
+  if (challengeStarted) return;
+  challengeStarted = true;
+  let count = 30;
+  countdownEl.textContent = count;
+  countdownEl.style.display = "block";
+
+  countdownInterval = setInterval(() => {
+    count--;
     countdownEl.textContent = count;
-    countdownEl.style.display = "block";
+    if (count <= 0) {
+      clearInterval(countdownInterval);
+      countdownEl.style.display = "none";
+    }
+  }, 1000);
 
-    countdownInterval = setInterval(() => {
-      count--;
-      countdownEl.textContent = count;
-      if (count <= 0) {
-        clearInterval(countdownInterval);
-        countdownEl.style.display = "none";
-      }
-    }, 1000);
+  timeoutId = setTimeout(() => {
+    if (!endingTriggered) {
+      overlayFail.style.display = "flex";
+      overlayVideoFail.play();
+      videoMap.kk61.play();
 
-    timeoutId = setTimeout(() => {
-      if (!endingTriggered) {
-        overlayFail.style.display = "flex";
-        videoMap.overlayVideoFail.play();
-        videoMap.kk61.play(); // 動画再生（mutedなし）
+      overlayVideoFail.onplay = () => {
+        audioMap.kk61.currentTime = 0;
+        audioMap.kk61.play().catch(e => console.warn("kk61 audio blocked:", e));
+      };
 
-        // 音声は Enterキーで再生
-        endingTriggered = true;
-      }
-    }, 30000);
-  }
+      challengeStarted = false;
+      endingTriggered = true;
+    }
+  }, 30000);
+}
 
   overlayVideoSuccess.onended = () => { overlaySuccess.style.display = "none"; };
   overlayVideoFail.onended = () => { overlayFail.style.display = "none"; };
 
-  // マーカー検出ごとの処理
   for (let i = 1; i <= 16; i++) {
     const el = document.getElementById(`target${i}`);
     el.addEventListener("targetFound", () => {
       if (challengeStarted && i !== 1 && !endingTriggered) return;
 
       switch (i) {
-        case 1:
-          if (challengeStarted && !endingTriggered) {
-            clearTimeout(timeoutId);
-            clearInterval(countdownInterval);
-            countdownEl.style.display = "none";
-            overlaySuccess.style.display = "flex";
-            videoMap.overlayVideoSuccess.play();
-            videoMap.kk62.play(); // 動画再生（mutedなし）
-            endingTriggered = true;
-          } else if (!challengeStarted) {
-            enqueueVoice("voice1");
-          }
-          break;
+case 1:
+  if (challengeStarted && !endingTriggered) {
+    clearTimeout(timeoutId);
+    clearInterval(countdownInterval);
+    countdownEl.style.display = "none";
+    overlaySuccess.style.display = "flex";
+    overlayVideoSuccess.play();
+    videoMap.kk62.play();
+
+    overlayVideoSuccess.onplay = () => {
+      audioMap.kk62.currentTime = 0;
+      audioMap.kk62.play().catch(e => console.warn("kk62 audio blocked:", e));
+    };
+
+    challengeStarted = false;
+    endingTriggered = true;
+  } else if (!challengeStarted) {
+    enqueueVoice("voice1");
+  }
+  break;
+
         case 2:
           videoMap.kk1.play();
           audioMap.kk1.play();
           break;
+
         case 3:
           videoMap.kk2.play();
           audioMap.kk2.play();
           break;
+
         case 4:
           enqueueVoice("voice2");
           break;
+
         case 5:
           videoMap.kk3.play();
           audioMap.kk3.play();
           break;
+
         case 6:
           videoMap.kk4.play();
           audioMap.kk4.play();
           break;
+
         case 7:
           enqueueVoice("voice3");
           break;
+
         case 8:
           videoMap.kk5.play();
           audioMap.kk5.play();
           break;
+
         case 9:
           enqueueVoice("voice4");
           break;
+
         case 10:
           enqueueVoice("voice5");
           break;
+
         case 11:
           videoMap.kk6.play();
           audioMap.kk6.play();
           break;
+
         case 12:
           enqueueVoice("voice6");
           break;
+
         case 13:
           videoMap.kk7.play();
           audioMap.kk7.play();
           break;
+
         case 14:
           enqueueVoice("voice7");
           break;
+
         case 15:
           enqueueVoice("voice8");
-          voiceMap.voice8.onended = () => { startCountdown(); };
+          voiceMap.voice8.onended = () => {
+            startCountdown();
+          };
           break;
+
         case 16:
           resetAll();
           break;
       }
     });
   }
-
-  // Enterキーで kk61 / kk62 の音声を再生
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      if (!audioMap.kk61.paused || videoMap.kk61.currentTime > 0) {
-        audioMap.kk61.currentTime = 0;
-        audioMap.kk61.play().catch(err => console.warn("kk61 audio blocked:", err));
-      }
-      if (!audioMap.kk62.paused || videoMap.kk62.currentTime > 0) {
-        audioMap.kk62.currentTime = 0;
-        audioMap.kk62.play().catch(err => console.warn("kk62 audio blocked:", err));
-      }
-    }
-  });
 
   resetAll();
 });

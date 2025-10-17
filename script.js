@@ -106,39 +106,39 @@ document.addEventListener("DOMContentLoaded", () => {
     currentVoice = null;
   }
 
-  function startCountdown() {
-    if (challengeStarted) return;
-    challengeStarted = true;
-    let count = 30;
+function startCountdown() {
+  if (challengeStarted) return;
+  challengeStarted = true;
+  let count = 30;
+  countdownEl.textContent = count;
+  countdownEl.style.display = "block";
+
+  countdownInterval = setInterval(() => {
+    count--;
     countdownEl.textContent = count;
-    countdownEl.style.display = "block";
+    if (count <= 0) {
+      clearInterval(countdownInterval);
+      countdownEl.style.display = "none";
+    }
+  }, 1000);
 
-    countdownInterval = setInterval(() => {
-      count--;
-      countdownEl.textContent = count;
-      if (count <= 0) {
-        clearInterval(countdownInterval);
-        countdownEl.style.display = "none";
-      }
-    }, 1000);
+  timeoutId = setTimeout(() => {
+    if (!endingTriggered) {
+      overlayFail.style.display = "flex";
+      overlayVideoFail.play();
+      videoMap.kk61.play();
 
-    timeoutId = setTimeout(() => {
-      if (!endingTriggered) {
-        overlayFail.style.display = "flex";
-        overlayVideoFail.play();
-		  
-		  videoMap.kk61.onplay = () => {
-  			setTimeout(() => {
-    			audioMap.kk61.play();
-  			}, 1000);
-		  };
-		  videoMap.kk61.play();
-		  
-        challengeStarted = false;
-        endingTriggered = true;
-      }
-    }, 30000);
-  }
+      // 🎵 オーバーレイ動画が再生されたら音声を鳴らす
+      overlayVideoFail.onplay = () => {
+        audioMap.kk61.currentTime = 0;
+        audioMap.kk61.play().catch(e => console.warn("kk61 audio blocked:", e));
+      };
+
+      challengeStarted = false;
+      endingTriggered = true;
+    }
+  }, 30000);
+}
 
   overlayVideoSuccess.onended = () => { overlaySuccess.style.display = "none"; };
   overlayVideoFail.onended = () => { overlayFail.style.display = "none"; };
@@ -149,26 +149,27 @@ document.addEventListener("DOMContentLoaded", () => {
       if (challengeStarted && i !== 1 && !endingTriggered) return;
 
       switch (i) {
-        case 1:
-          if (challengeStarted && !endingTriggered) {
-            clearTimeout(timeoutId);
-            clearInterval(countdownInterval);
-            countdownEl.style.display = "none";
-            overlaySuccess.style.display = "flex";
-            overlayVideoSuccess.play();
-			  videoMap.kk62.onplay = () => {
-  				setTimeout(() => {
-    				audioMap.kk62.play();
-  				}, 1000);
-			  };
-			  videoMap.kk62.play();
-			  
-            challengeStarted = false;
-            endingTriggered = true;
-          } else if (!challengeStarted) {
-            enqueueVoice("voice1");
-          }
-          break;
+case 1:
+  if (challengeStarted && !endingTriggered) {
+    clearTimeout(timeoutId);
+    clearInterval(countdownInterval);
+    countdownEl.style.display = "none";
+    overlaySuccess.style.display = "flex";
+    overlayVideoSuccess.play();
+    videoMap.kk62.play();
+
+    // 🎵 成功オーバーレイ動画が再生されたら音声を鳴らす
+    overlayVideoSuccess.onplay = () => {
+      audioMap.kk62.currentTime = 0;
+      audioMap.kk62.play().catch(e => console.warn("kk62 audio blocked:", e));
+    };
+
+    challengeStarted = false;
+    endingTriggered = true;
+  } else if (!challengeStarted) {
+    enqueueVoice("voice1");
+  }
+  break;
 
         case 2:
           videoMap.kk1.play();

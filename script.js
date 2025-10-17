@@ -138,7 +138,26 @@ document.addEventListener("DOMContentLoaded", () => {
       if (challengeStarted && i !== 1 && !endingTriggered) return;
 
       switch(i) {
-        case 1: enqueueVoice("voice1"); break;
+        case 1:
+          if (challengeStarted && !endingTriggered) {
+            clearTimeout(timeoutId);
+            clearInterval(countdownInterval);
+            countdownEl.style.display = "none";
+            overlaySuccess.style.display = "flex";
+            overlayVideoSuccess.play();
+            videoMap.kk62.play();
+
+            overlayVideoSuccess.onplay = () => {
+              audioMap.kk62.currentTime = 0;
+              audioMap.kk62.play().catch(e => console.warn("kk62 audio blocked:", e));
+            };
+
+            challengeStarted = false;
+            endingTriggered = true;
+          } else if (!challengeStarted) {
+            enqueueVoice("voice1");
+          }
+          break;
         case 2: videoMap.kk1.play(); audioMap.kk1.play(); break;
         case 3: videoMap.kk2.play(); audioMap.kk2.play(); break;
         case 4: videoMap.kk3.play(); enqueueVoice("voice2"); break;

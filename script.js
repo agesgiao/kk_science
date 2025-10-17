@@ -12,8 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
     kk5: document.getElementById("kk5"),
     kk6: document.getElementById("kk6"),
     kk7: document.getElementById("kk7"),
-    kk61: document.getElementById("kk61"), 
-    kk62: document.getElementById("kk62")  
+    kk61: document.getElementById("kk61"),
+    kk62: document.getElementById("kk62")
   };
 
   const audioMap = {
@@ -122,14 +122,12 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!endingTriggered) {
         overlayFail.style.display = "flex";
         overlayVideoFail.play();
-
-        setTimeout(() => {
-  videoMap.kk61.play();
-  audioMap.kk61.currentTime = 0;
-  audioMap.kk61.play();
-}, 300);
-
-
+        videoMap.kk61.play();
+		  
+		setTimeout(() => {
+			audioMap.kk61.play();
+		}, 300);
+		  
         challengeStarted = false;
         endingTriggered = true;
       }
@@ -141,8 +139,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   for (let i = 1; i <= 16; i++) {
     const el = document.getElementById(`target${i}`);
-    if (!el) continue;
-
     el.addEventListener("targetFound", () => {
       if (challengeStarted && i !== 1 && !endingTriggered) return;
 
@@ -154,13 +150,12 @@ document.addEventListener("DOMContentLoaded", () => {
             countdownEl.style.display = "none";
             overlaySuccess.style.display = "flex";
             overlayVideoSuccess.play();
-
-           setTimeout(() => {
-  videoMap.kk62.play();
-  audioMap.kk62.currentTime = 0;
-  audioMap.kk62.play();
-}, 300);
-
+            videoMap.kk62.play();
+			  
+			setTimeout(() => {
+				audioMap.kk62.play();
+			}, 300);
+			  
             challengeStarted = false;
             endingTriggered = true;
           } else if (!challengeStarted) {
